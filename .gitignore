@@ -1,0 +1,10 @@
+# Xcode proje dosyası kullanıcı verileri
+*.xcuserdata
+*.xcuserstate
+
+# Xcode proje dosyası
+GitHubFollowers.xcodeproj/project.pbxproj
+GitHubFollowers.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Geçici dosyalar
+.DS_Store
