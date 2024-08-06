@@ -13,6 +13,7 @@
 		454F65312C610F1A004550F5 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 454F65302C610F1A004550F5 /* Base */; };
 		454F653A2C6115BF004550F5 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454F65392C6115BF004550F5 /* SearchVC.swift */; };
 		454F653C2C611605004550F5 /* FavoritesListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454F653B2C611605004550F5 /* FavoritesListVC.swift */; };
+		454F653E2C623568004550F5 /* GFButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454F653D2C623568004550F5 /* GFButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		454F65322C610F1A004550F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		454F65392C6115BF004550F5 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
 		454F653B2C611605004550F5 /* FavoritesListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesListVC.swift; sourceTree = "<group>"; };
+		454F653D2C623568004550F5 /* GFButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 				454F65322C610F1A004550F5 /* Info.plist */,
 				454F65392C6115BF004550F5 /* SearchVC.swift */,
 				454F653B2C611605004550F5 /* FavoritesListVC.swift */,
+				454F653D2C623568004550F5 /* GFButton.swift */,
 			);
 			path = GitHubFollowers;
 			sourceTree = "<group>";
@@ -146,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				454F653C2C611605004550F5 /* FavoritesListVC.swift in Sources */,
+				454F653E2C623568004550F5 /* GFButton.swift in Sources */,
 				454F653A2C6115BF004550F5 /* SearchVC.swift in Sources */,
 				454F65252C610F19004550F5 /* AppDelegate.swift in Sources */,
 				454F65272C610F19004550F5 /* SceneDelegate.swift in Sources */,
