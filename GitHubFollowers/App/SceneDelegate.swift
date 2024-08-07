@@ -19,6 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window?.windowScene = windowScene
     window?.rootViewController = createTabBarController()
     window?.makeKeyAndVisible()
+    configureNavigationBar()
   }
 
   private func createNavigationController(vC: UIViewController, title: String, tabBarItem: UITabBarItem.SystemItem, tag: Int) -> UINavigationController {
@@ -34,12 +35,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     let tabBarController = UITabBarController()
     let tabBarAppearance = UITabBar.appearance()
     tabBarAppearance.tintColor = .systemGreen
-    tabBarAppearance.backgroundColor = .systemGray
+    tabBarAppearance.backgroundColor = .white
     tabBarController.viewControllers = [
       createNavigationController(vC: SearchVC(), title: "Search", tabBarItem: .search, tag: 0),
       createNavigationController(vC: FavoritesListVC(), title: "Favorites", tabBarItem: .favorites, tag: 1)
     ]
     return tabBarController
+  }
+
+  private func configureNavigationBar() {
+    UINavigationBar.appearance().tintColor = .systemGreen
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {
