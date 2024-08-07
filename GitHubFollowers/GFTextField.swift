@@ -22,14 +22,15 @@ class GFTextField: UITextField {
     textColor = .label
     tintColor = .label
     textAlignment = .center
+
     font = UIFont.preferredFont(forTextStyle: .title2)
     adjustsFontSizeToFitWidth = true
     minimumFontSize = 12
 
     backgroundColor = .tertiarySystemBackground
+    keyboardType = .emailAddress
+    returnKeyType = .go
     autocorrectionType = .no
-
-    placeholder = "Enter user name"
   }
 
   required init?(coder: NSCoder) {
