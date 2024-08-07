@@ -7,11 +7,15 @@
 
 import UIKit
 
-class FollowerListVC: UIViewController {
-  
+class FollowingListVC: UIViewController {
+
   var userName: String!
   override func viewDidLoad() {
     super.viewDidLoad()
+    navigationController?.setNavigationBarHidden(false, animated: true)
+    navigationController?.navigationBar.prefersLargeTitles = true
     view.backgroundColor = .systemPink
+    navigationController?.title = userName
   }
+
 }
