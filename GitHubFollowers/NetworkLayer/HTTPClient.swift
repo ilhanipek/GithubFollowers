@@ -29,16 +29,44 @@ enum NetworkError: Error {
 }
 
 protocol HTTPClientProtocol {
-  
+  func processRequest<T>(urlRequest: URLRequest, with returningType: T.Type) async throws -> T where T: Decodable
 }
 
 class HTTPClient: HTTPClientProtocol {
 
-  var jsonDecoder = JSONDecoder()
-  var jsonEncoder = JSONEncoder()
-  
+  let httpClient = HTTPClient()
+
+  private var jsonDecoder : JSONDecoder
+  private var jsonEncoder : JSONEncoder
+
+  init(jsonDecoder: JSONDecoder = JSONDecoder(), jsonEncoder: JSONEncoder = JSONEncoder()) {
+    jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
+    self.jsonDecoder = jsonDecoder
+    self.jsonEncoder = jsonEncoder
+  }
+
   // Request Handling
-  func makeUrlRequest<Model: Codable>(baseUrl: URL, path: String?, httpMethod: HTTPMethod, queryParameters: [String: String]?, model: Model? = nil) throws -> URLRequest {
+  func makeUrlRequest(baseUrl: URL, path: String?, httpMethod: HTTPMethod, queryParameters: [String: String]?) throws -> URLRequest {
+    let url: URL
+
+    if let path = path {
+      url = baseUrl.appendingPathComponent(path)
+    } else {
+      url = baseUrl
+    }
+
+    if let queryParameters = queryParameters {
+      var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+      urlComponents?.queryItems = queryParameters.map({ URLQueryItem(name: $0.key, value: $0.value) })
+    }
+
+    var urlRequest = URLRequest(url: url)
+    urlRequest.httpMethod = httpMethod.rawValue
+
+    return urlRequest
+  }
+
+  func makeUrlRequest<Model: Encodable>(baseUrl: URL, path: String?, httpMethod: HTTPMethod, queryParameters: [String: String]?, model: Model) throws -> URLRequest {
     let url: URL
 
     if let path = path {
@@ -58,18 +86,16 @@ class HTTPClient: HTTPClientProtocol {
     return urlRequest
   }
 
-  private func handleUrlRequest<Model: Encodable>(urlRequest: inout URLRequest, httpMethod: HTTPMethod, model: Model? = nil) throws {
+  private func handleUrlRequest<Model: Encodable>(urlRequest: inout URLRequest, httpMethod: HTTPMethod, model: Model) throws {
     urlRequest.httpMethod = httpMethod.rawValue
 
-    if httpMethod != .get && model != nil {
-      let jsonData = try jsonEncoder.encode(model)
-      urlRequest.httpBody = jsonData
-      urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    }
+    let jsonData = try jsonEncoder.encode(model)
+    urlRequest.httpBody = jsonData
+    urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
   }
 
   // Response Handling
-
   func processRequest<T>(urlRequest: URLRequest, with returningType: T.Type) async throws -> T where T: Decodable {
     let (data, response) = try await URLSession.shared.data(for: urlRequest)
     let result = verifyResponse(data: data, response: response)
