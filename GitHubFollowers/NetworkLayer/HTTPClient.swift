@@ -16,17 +16,43 @@ enum HTTPMethod: String {
   case delete = "DELETE"
 }
 
-enum RequestError: Error {
-  case badUrl
-  case badModel
+enum RequestError: LocalizedError {
+    case badUrl
+    case badModel
+    case encodingFailed(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .badUrl:
+            return "Invalid URL."
+        case .badModel:
+            return "The model provided is invalid."
+        case .encodingFailed(let error):
+            return "Failed to encode the model. Error: \(error.localizedDescription)"
+        }
+    }
 }
 
-enum NetworkError: Error {
-  case clientError
-  case serverError
-  case invalidResponse
-  case unknown
+enum NetworkError: LocalizedError {
+    case clientError(statusCode: Int)
+    case serverError(statusCode: Int)
+    case invalidResponse
+    case unknown(Error?)
+
+    var errorDescription: String? {
+        switch self {
+        case .clientError(let statusCode):
+            return "Client error with status code: \(statusCode)."
+        case .serverError(let statusCode):
+            return "Server error with status code: \(statusCode)."
+        case .invalidResponse:
+            return "Invalid response from the server."
+        case .unknown(let error):
+            return "An unknown error occurred: \(error?.localizedDescription ?? "No additional information")."
+        }
+    }
 }
+
 
 protocol HTTPClientProtocol {
   func processRequest<T>(urlRequest: URLRequest, with returningType: T.Type) async throws -> T where T: Decodable
@@ -81,8 +107,12 @@ class HTTPClient: HTTPClientProtocol {
     }
 
     var urlRequest = URLRequest(url: url)
-
-    try handleUrlRequest(urlRequest: &urlRequest, httpMethod: httpMethod, model: model)
+    
+    do {
+      try handleUrlRequest(urlRequest: &urlRequest, httpMethod: httpMethod, model: model)
+    } catch {
+      throw RequestError.encodingFailed(error)
+    }
     return urlRequest
   }
 
@@ -108,19 +138,19 @@ class HTTPClient: HTTPClientProtocol {
   }
 
   private func verifyResponse(data: Data, response: URLResponse) -> Result<Data, Error> {
-    guard let httpResponse = response as? HTTPURLResponse else {
-      return .failure(NetworkError.invalidResponse)
-    }
-    switch httpResponse.statusCode {
-    case 200...299:
-      return .success(data)
-    case 400...499:
-      return .failure(NetworkError.clientError)
-    case 500...599:
-      return .failure(NetworkError.serverError)
-    default:
-      return .failure(NetworkError.unknown)
-    }
-  }
+          guard let httpResponse = response as? HTTPURLResponse else {
+              return .failure(NetworkError.invalidResponse)
+          }
+          switch httpResponse.statusCode {
+          case 200...299:
+              return .success(data)
+          case 400...499:
+              return .failure(NetworkError.clientError(statusCode: httpResponse.statusCode))
+          case 500...599:
+              return .failure(NetworkError.serverError(statusCode: httpResponse.statusCode))
+          default:
+              return .failure(NetworkError.unknown(nil))
+          }
+      }
 }
 
