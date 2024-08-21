@@ -60,20 +60,14 @@ protocol HTTPClientProtocol {
 
 class HTTPClient: HTTPClientProtocol {
 
-  let httpClient = HTTPClient()
+  static let httpClient = HTTPClient()
 
-  private var jsonDecoder : JSONDecoder
-  private var jsonEncoder : JSONEncoder
-
-  init(jsonDecoder: JSONDecoder = JSONDecoder(), jsonEncoder: JSONEncoder = JSONEncoder()) {
-    jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
-    self.jsonDecoder = jsonDecoder
-    self.jsonEncoder = jsonEncoder
-  }
+  private var jsonDecoder = JSONDecoder()
+  private var jsonEncoder = JSONEncoder()
 
   // Request Handling
   func makeUrlRequest(baseUrl: URL, path: String?, httpMethod: HTTPMethod, queryParameters: [String: String]?) throws -> URLRequest {
-    let url: URL
+    var url: URL
 
     if let path = path {
       url = baseUrl.appendingPathComponent(path)
@@ -84,11 +78,12 @@ class HTTPClient: HTTPClientProtocol {
     if let queryParameters = queryParameters {
       var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
       urlComponents?.queryItems = queryParameters.map({ URLQueryItem(name: $0.key, value: $0.value) })
+      url = (urlComponents?.url)!
     }
 
     var urlRequest = URLRequest(url: url)
     urlRequest.httpMethod = httpMethod.rawValue
-
+    print(url)
     return urlRequest
   }
 
@@ -131,6 +126,7 @@ class HTTPClient: HTTPClientProtocol {
     let result = verifyResponse(data: data, response: response)
     switch result {
     case .success(let data):
+      jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
       return try jsonDecoder.decode(returningType, from: data)
     case .failure(let error):
       throw error
