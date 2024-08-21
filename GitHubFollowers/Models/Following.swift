@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct Following : Codable, Hashable {
+  var login : String
+  var avatarUrl : String
+}
